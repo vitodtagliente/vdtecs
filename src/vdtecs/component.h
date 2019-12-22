@@ -1,44 +1,37 @@
+/// Copyright (c) Vito Domenico Tagliente
+
 #pragma once
 
-#include "entity.h"
+#include <cstdint>
 
-namespace ECS
+namespace ecs
 {
+	template <typename T>
 	class Component
 	{
 	public:
 
+		using id_t = std::uint32_t;
+		using type = T;
+
 		Component()
-			: m_id(++id_counter)
-			, m_entityId()
-		{
+			: m_id()
+		{}
 
+		inline id_t id() const { return m_id; }
+
+		bool operator== (const Component<T>& component) const
+		{
+			return m_id == component.m_id;
 		}
-		virtual ~Component() = default;
-
-		size_t id() const { return m_id; }
-
-		size_t getEntityId() const { return m_entityId; }
-
-		inline virtual bool operator== (const Component& t_other) const
+		bool operator!= (const Component<T>& component) const
 		{
-			return m_id == t_other.m_id;
-		}
-		inline virtual bool operator!= (const Component& t_other) const
-		{
-			return m_id != t_other.m_id;
+			return m_id != component.m_id;
 		}
 
 	private:
 
-		static size_t id_counter;
-
 		// component id
-		size_t m_id;
-		// owner entity id
-		size_t m_entityId;
-
+		id_t m_id;
 	};
-
-	size_t Component::id_counter = 0;
 }
