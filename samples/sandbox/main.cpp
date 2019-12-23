@@ -13,7 +13,7 @@ struct Position : public Component<Position>
 class PositionSystem : public System<Position>
 {
 private:
-	virtual void each(component_t& position) override
+	virtual void each(Position& position, const float delta_time) override
 	{
 		
 	}
@@ -27,8 +27,11 @@ int main()
 	Entity a = Entity::create();
 	Entity b = Entity::create();
 
-	PositionSystem pSystem;
-	
+	SystemManager manager;
+	manager.add<PositionSystem>();
+	PositionSystem* const system = manager.get<PositionSystem>();
+	manager.remove<PositionSystem>();
+
 	for (auto entity : Entity::all())
 	{
 		cout << entity.id() << endl;

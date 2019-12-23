@@ -15,9 +15,9 @@ namespace ecs
 	{
 	public:
 
-		virtual void init() {};
+		virtual void init() = 0;
 		virtual void update(const float delta_time) = 0;
-		virtual void uninit() {};
+		virtual void uninit() = 0;
 	};
 
 	template <class T>
@@ -25,8 +25,6 @@ namespace ecs
 	{
 	public:
 
-		using component_t = Component<T>;
-		using entity_id_t = Entity::id_t;
 		using id_t = std::uint32_t;
 
 		System()
@@ -42,7 +40,7 @@ namespace ecs
 		}
 
 		template <typename... P>
-		inline component_t& addComponent(const Entity& entity, P... args)
+		inline T& addComponent(const Entity& entity, P... args)
 		{
 			// check if the entity is a valid one
 			assert(entity.isValid());
@@ -51,8 +49,9 @@ namespace ecs
 			// assert(m_lookup.find(t_entity) == m_lookup.end());
 			// assert(m_lookup.size() == m_components.size());
 
-			component_t component_to_add(std::forward<P>(args)...);
-			component_to_add.m_id = ++is_counter;
+			// create a new component for the given entity
+			T component_to_add(std::forward<P>(args)...);
+			// component_to_add.m_id = 1;
 			m_components.push_back(component_to_add);
 
 			return m_components.back();
@@ -89,28 +88,30 @@ namespace ecs
 			// m_entities.clear();
 		}
 
-		virtual void update(const float deltaTime) override
+		// system's initialization
+		virtual void init() override {}
+
+		// updating components
+		virtual void update(const float delta_time) override
 		{
-			for (component_t& component : m_components)
+			for (T& component : m_components)
 			{
-				each(component);
+				each(component, delta_time);
 			}
 		}
 
+		// system's uninitalization
+		virtual void uninit() override {}
+
 	protected:
 
-		virtual void each(component_t& component) = 0;
+		virtual void each(T& component, const float delta_time) = 0;
 
 	private:
 
 		// list of all components
-		std::vector<component_t> m_components;
+		std::vector<T> m_components;
 		// lookup table with maps entities with their components
 		// std::unordered_map<entity_id_t, component_t::id_t> m_lookup;
-
-		static size_t id_counter;
 	};
-
-	template <typename T>
-	size_t System<T>::id_counter = 0;
 }

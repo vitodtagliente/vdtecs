@@ -145,6 +145,13 @@ namespace ecs
 			return m_id != other.m_id; 
 		}
 
+		template <typename T, typename... P>
+		inline T& addComponent(P... args)
+		{
+			// TODO
+			return T{};
+		}
+
 		static Entity create()
 		{
 			return s_manager.create();

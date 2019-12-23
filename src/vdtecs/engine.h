@@ -17,12 +17,6 @@ namespace ecs
 			// m_systemManager.update(deltaTime);
 		}
 
-		template <typename T, typename... P>
-		void addSystem(P... t_args)
-		{
-			m_systemManager.add<T>(std::forward<P>(t_args)...);
-		}
-
 	private:
 
 	};

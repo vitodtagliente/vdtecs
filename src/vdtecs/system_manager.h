@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <memory>
 #include <vector>
 #include <unordered_map>
@@ -10,74 +11,67 @@
 
 namespace ecs
 {
-	template <typename T>
-	constexpr unsigned int Foo()
-	{
-		return 0;
-	}
-	
-	class SystemManager
+	class SystemManager final
 	{
 	public:
 
 		SystemManager()
 		{}
+
 		~SystemManager() = default;
 
 		template <typename T, typename... P>
-		void add(P... t_args)
+		ISystem* const add(P... args)
 		{
-			// assert(std::is_base_of<BaseSystem, T>::value == true);
-			
-			type_id_t id = type_id<T>(); 
-			const auto it = m_systems.find(id);
-			// add if not found
-			if (it == m_systems.end())
+			ISystem* const system = new T(std::forward<P>(args)...);
+			system->init();
+			m_systems.push_back(system);
+			return system;
+		}
+
+		template <typename T>
+		T* const get() const
+		{
+			for (ISystem* system : m_systems)
 			{
-				m_systems.insert({
-					id,
-					std::make_unique<T>(std::forward<P>(t_args)...)
-					});
-			}			
+				T* const t_system = static_cast<T*>(system);
+				if (t_system != nullptr)
+					return t_system;
+			}
+			return nullptr;
 		}
 
 		template <typename T>
 		void remove()
 		{
-			type_id_t id = type_id<T>();
-			const auto it = m_systems.find(id);
-			// add if not found
+			const auto it = std::find_if(
+				m_systems.begin(),
+				m_systems.end(),
+				[](ISystem* const system)
+				{
+					return static_cast<T*>(system) != nullptr;
+				}
+			);
+
 			if (it != m_systems.end())
 			{
+				(*it)->uninit();
 				m_systems.erase(it);
 			}
 		}
 
-		void init()
+		void update(const float delta_time)
 		{
-
-		}
-
-		void update(const float t_deltaTime)
-		{
-			for (const auto& pair : m_systems)
+			for (ISystem* const system : m_systems)
 			{
-				pair.second->update(t_deltaTime);
+				system->update(delta_time);
 			}
-		}
-
-		void uninit()
-		{
-
-		}
-
-		void clear()
-		{
-			m_systems.clear();
 		}
 
 	private:
 
-		std::unordered_map<type_id_t, std::unique_ptr<BaseSystem>> m_systems;
+		// systems collection
+		std::vector<ISystem*> m_systems;
+
 	};
 }
