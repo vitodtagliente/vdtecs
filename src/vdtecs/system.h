@@ -25,6 +25,8 @@ namespace ecs
 	{
 	public:
 
+		using iterator = std::vector<T>::iterator;
+		using const_iterator = std::vector<T>::const_iterator;
 		using id_t = std::uint32_t;
 
 		System()
@@ -102,6 +104,16 @@ namespace ecs
 
 		// system's uninitalization
 		virtual void uninit() override {}
+
+		const_iterator begin() const noexcept
+		{
+			return m_components.begin();
+		}
+
+		const_iterator end() const noexcept
+		{
+			return m_components.end();
+		}
 
 	protected:
 

@@ -29,9 +29,7 @@ int main()
 
 	SystemManager manager;
 	manager.add<PositionSystem>();
-	PositionSystem* const system = manager.get<PositionSystem>();
-	manager.remove<PositionSystem>();
-
+	
 	for (auto entity : Entity::all())
 	{
 		cout << entity.id() << endl;

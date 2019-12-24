@@ -15,6 +15,9 @@ namespace ecs
 	{
 	public:
 
+		using iterator = std::vector<ISystem*>::iterator;
+		using const_iterator = std::vector<ISystem*>::const_iterator;
+
 		SystemManager()
 		{}
 
@@ -60,12 +63,14 @@ namespace ecs
 			}
 		}
 
-		void update(const float delta_time)
+		const_iterator begin() const noexcept
+		{ 
+			return m_systems.begin(); 
+		}
+
+		const_iterator end() const noexcept
 		{
-			for (ISystem* const system : m_systems)
-			{
-				system->update(delta_time);
-			}
+			return m_systems.end();
 		}
 
 	private:
