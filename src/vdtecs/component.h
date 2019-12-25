@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cstdint>
+#include <typeinfo>
 #include "entity.h"
 
 namespace ecs
@@ -34,11 +35,22 @@ namespace ecs
 			return m_id != component.m_id;
 		}
 
+		static std::size_t type_id()
+		{
+			return s_type_id;
+		}
+
 	private:
 
 		// component id
 		id_t m_id;
 		// entity id
 		entity_id_t m_entity;
+
+		// component type id
+		static std::size_t s_type_id;
 	};
+
+	template <typename T>
+	std::size_t Component<T>::s_type_id = typeid(T).hash_code();
 }

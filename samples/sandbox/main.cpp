@@ -10,6 +10,11 @@ struct Position : public Component<Position>
 	int y;
 };
 
+struct Velocity : public Component<Velocity>
+{
+	int a;
+};
+
 class PositionSystem : public System<Position>
 {
 private:
@@ -27,13 +32,17 @@ int main()
 	Entity a = Entity::create();
 	Entity b = Entity::create();
 
-	SystemManager manager;
+	SystemManager& manager = SystemManager::instance();
 	manager.add<PositionSystem>();
+
+	a.addComponent<Position>(1, 3);
 	
 	for (auto entity : Entity::all())
 	{
 		cout << entity.id() << endl;
 	}
+	
+
 
 	return getchar();
 }

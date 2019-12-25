@@ -18,11 +18,6 @@ namespace ecs
 		using iterator = std::vector<ISystem*>::iterator;
 		using const_iterator = std::vector<ISystem*>::const_iterator;
 
-		SystemManager()
-		{}
-
-		~SystemManager() = default;
-
 		template <typename T, typename... P>
 		ISystem* const add(P... args)
 		{
@@ -35,7 +30,7 @@ namespace ecs
 		template <typename T>
 		T* const get() const
 		{
-			for (ISystem* system : m_systems)
+			for (ISystem* const system : m_systems)
 			{
 				T* const t_system = static_cast<T*>(system);
 				if (t_system != nullptr)
@@ -73,10 +68,24 @@ namespace ecs
 			return m_systems.end();
 		}
 
+		static SystemManager& instance()
+		{
+			return s_instance;
+		}
+
 	private:
+
+		SystemManager()
+		{}
+
+		~SystemManager() = default;
 
 		// systems collection
 		std::vector<ISystem*> m_systems;
-
+		// singleton
+		static SystemManager s_instance;
 	};
+
+	// instance initialization
+	SystemManager SystemManager::s_instance{};
 }
