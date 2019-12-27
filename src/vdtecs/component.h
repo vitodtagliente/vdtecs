@@ -8,6 +8,7 @@
 
 namespace ecs
 {
+	/*
 	template <typename T>
 	class Component
 	{
@@ -53,4 +54,5 @@ namespace ecs
 
 	template <typename T>
 	std::size_t Component<T>::s_type_id = typeid(T).hash_code();
+	*/
 }

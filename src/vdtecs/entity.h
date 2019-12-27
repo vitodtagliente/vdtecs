@@ -148,7 +148,6 @@ namespace ecs
 		template <typename T, typename... P>
 		inline T& addComponent(P... args)
 		{
-			// TODO
 			return T{};
 		}
 

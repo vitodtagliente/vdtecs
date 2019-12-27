@@ -4,10 +4,10 @@
 
 #include <algorithm>
 #include <memory>
+#include <typeinfo>
 #include <vector>
 #include <unordered_map>
 #include "system.h"
-#include "type_id.h"
 
 namespace ecs
 {
@@ -18,24 +18,40 @@ namespace ecs
 		using iterator = std::vector<ISystem*>::iterator;
 		using const_iterator = std::vector<ISystem*>::const_iterator;
 
-		template <typename T, typename... P>
-		ISystem* const add(P... args)
+		// template <typename T, typename... P>
+		// ISystem* const add(P... args)
+		// {
+		// 	ISystem* const system = new T(std::forward<P>(args)...);
+		// 	system->init();
+		// 	m_systems.push_back(system);
+		// 	m_lookup.insert({ T::component_t::type_id(), system });
+		// 	return system;
+		// }
+
+		void push_back(ISystem* const system)
 		{
-			ISystem* const system = new T(std::forward<P>(args)...);
-			system->init();
 			m_systems.push_back(system);
-			return system;
 		}
 
 		template <typename T>
 		T* const get() const
 		{
-			for (ISystem* const system : m_systems)
-			{
-				T* const t_system = static_cast<T*>(system);
-				if (t_system != nullptr)
-					return t_system;
-			}
+			// if T is a component type, retrieve it by the lookup table
+			// if (std::is_base_of<Component<T>, T>::value)
+			// {
+			// 	const auto it = m_lookup.find(T:type_id());
+			// 	if (it != m_lookup.end())
+			// 	{
+			// 		return it->second;
+			// 	}
+			// }
+			// 
+			// for (ISystem* const system : m_systems)
+			// {
+			// 	T* const t_system = static_cast<T*>(system);
+			// 	if (t_system != nullptr)
+			// 		return t_system;
+			// }
 			return nullptr;
 		}
 
