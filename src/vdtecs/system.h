@@ -85,8 +85,7 @@ namespace ecs
 		template <typename... P>
 		Component& addComponent(const Entity& entity, P... args)
 		{
-			m_components.push_back(Component{ 0, entity.id(), C{std::forward<P>(args)...} });
-			return m_components.front();
+			return addComponent(entity.id(), std::forward<P>(args)...);
 		}
 
 		template <typename... P>
@@ -99,6 +98,24 @@ namespace ecs
 		// retrieve all components
 		inline std::vector<Component>& components() { return m_components; }
 		inline const std::vector<Component>& components() const { return m_components; }
+
+		void removeComponent(const Entity& entity)
+		{
+			removeComponent(entity.id());
+		}
+
+		void removeComponent(const Entity::id_t entity_id)
+		{
+			const auto it = std::find_if(
+				m_components.begin(),
+				m_components.end()
+				[id = entity_id](const Component& component)
+				{
+					return component.entity_id() == id;
+				}
+			);
+			m_components.erase(it);
+		}
 
 	private:
 
