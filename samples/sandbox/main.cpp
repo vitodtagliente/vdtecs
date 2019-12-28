@@ -23,6 +23,7 @@ int main()
 	Entity a = Entity::create();
 	Entity b = Entity::create();
 	a.addComponent<Position>(1, 3);
+	a.invalidate();
 	
 	for (auto entity : Entity::all())
 	{

@@ -3,7 +3,7 @@ get_filename_component(ProjectId ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 string(REPLACE " " "_" ProjectId ${ProjectId})
 project(${ProjectId})
 
-include_directories(. ../../src/)
+include_directories(. ../../include)
 
 file(GLOB PROJECT_HEADERS *.h) 
 file(GLOB PROJECT_SOURCES *.cpp)
@@ -18,4 +18,5 @@ add_executable(
 
 target_link_libraries(
     ${PROJECT_NAME} 
+    vdtecs
 )
