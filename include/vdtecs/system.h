@@ -68,6 +68,9 @@ namespace ecs
 
 		}
 
+		// type aliases
+		using data_t = C;
+
 		// returns the system instance
 		static S& instance() { return s_instance; }
 		// returns the system type id

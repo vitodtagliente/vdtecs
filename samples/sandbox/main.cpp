@@ -22,15 +22,15 @@ int main()
 
 	Entity a = Entity::create();
 	Entity b = Entity::create();
-	a.addComponent<Position>(1, 3);
+	auto positionComponent = a.addComponent<PositionSystem::Component>(1, 3);
 	a.invalidate();
+
+	positionComponent.data().x = 6;
 	
 	for (auto entity : Entity::all())
 	{
 		cout << entity.id() << endl;
 	}
-
-	PositionSystem::instance().addComponent(a);
 
 	return getchar();
 }

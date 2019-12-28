@@ -9,10 +9,18 @@
 
 namespace ecs
 {
+	/// An entity is basically an unsigned int 32
+	/// This class wraps that number and offers functions that
+	/// let the entity management easier (destroy, components, etc...)
+	/// sizeof(Entity) == sizeof(std::uint32)
+	/// It is not required to dynamically allocate these entities,
+	/// pointers are no required, basic copies are enough to work with this class.
 	class Entity final
 	{
 	public:
-
+		
+		/// this Manager is responsible of ids assignments
+		/// moreover, it behaves as a central location in which all entities are stored
 		class Manager
 		{
 		public:
@@ -23,14 +31,17 @@ namespace ecs
 
 			Manager();
 
+			// create a new entity, id assignment logic
 			Entity create();
-
+			// retrieve all the alive entities 
 			const std::vector<Entity>& all() const;
-
+			// find an entity
 			Entity find(const id_t id) const;
-
+			// remove an entity
+			// (system components removement)
 			void remove(const id_t id);
 
+			// reset and clear all data
 			void reset();
 
 		private:
@@ -63,13 +74,12 @@ namespace ecs
 		template <typename T, typename... P>
 		inline T& addComponent(P... args)
 		{
-			return T{};
+			return T::system_t::instance().addComponent(m_id, std::forward<P>(args)...);
 		}
 
+		// facilities APIs
 		static Entity create();
-
 		static Entity find(const id_t id);
-
 		static std::vector<Entity> all();
 
 		// get the Entity Manager
