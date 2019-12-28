@@ -77,6 +77,12 @@ namespace ecs
 			return T::system_t::instance().addComponent(m_id, std::forward<P>(args)...);
 		}
 
+		template <typename T>
+		inline void removeComponent()
+		{
+			T::system_t::instance().removeComponent(m_id);
+		}
+
 		// facilities APIs
 		static Entity create();
 		static Entity find(const id_t id);

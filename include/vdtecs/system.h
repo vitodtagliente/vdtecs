@@ -5,7 +5,6 @@
 #include <cassert>
 #include <cstddef>
 #include <vector>
-#include "component.h"
 #include "entity.h"
 #include "type_id.h"
 
