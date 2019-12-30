@@ -33,11 +33,17 @@ namespace ecs
 			using id_t = std::uint32_t;
 			using system_t = S;
 
+			static constexpr id_t INVALID_ID = 0;
+
 			Component(const id_t id, const entity_id_t entity_id, const data_t& data)
 				: m_id(id)
 				, m_entity_id(entity_id)
 				, m_data(data)
 			{}
+
+			inline bool is_valid() const { return m_id != INVALID_ID; }
+			inline operator bool() const { return is_valid(); }
+			inline void invalidate() { m_id = INVALID_ID; }
 
 			// returns the component id
 			inline id_t id() const { return m_id; }
@@ -49,12 +55,12 @@ namespace ecs
 			// returns the component type id
 			static std::size_t type_id() { return s_type_id; }
 
-			bool operator== (const Component& component) const
+			inline bool operator== (const Component& component) const
 			{
 				return m_id == component.m_id;
 			}
 
-			bool operator!= (const Component& component) const
+			inline bool operator!= (const Component& component) const
 			{
 				return m_id != component.m_id;
 			}
