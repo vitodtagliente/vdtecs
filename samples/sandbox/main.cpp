@@ -22,10 +22,12 @@ int main()
 
 	Entity a = Entity::create();
 	Entity b = Entity::create();
-	auto positionComponent = a.addComponent<PositionSystem::Component>(1, 3);
-	a.invalidate();
-
-	positionComponent.data().x = 6;
+	a.addComponent<PositionSystem::Component>(1, 3);
+	a.addComponent<PositionSystem::Component>(2, 5);
+	a.addComponent<PositionSystem::Component>(3, 3);
+	
+	const auto& c = a.getComponent<PositionSystem::Component>();
+	const auto& component = a.getComponents<PositionSystem::Component>();
 	
 	for (auto entity : Entity::all())
 	{
