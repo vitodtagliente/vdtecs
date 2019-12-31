@@ -76,6 +76,11 @@ namespace ecs
 			static std::size_t s_type_id;
 		};
 
+		class ComponentPtr
+		{
+
+		};
+
 		System() = default;
 
 		// type aliases

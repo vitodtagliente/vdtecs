@@ -10,7 +10,7 @@ namespace ecs
 
 		Engine() = default;
 
-		void update(const float deltaTime);
+		void update(const float delta_time);
 
 		static Engine& instance();
 
