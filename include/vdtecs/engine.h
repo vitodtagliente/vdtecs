@@ -1,7 +1,6 @@
-#pragma once
+/// Copyright (c) Vito Domenico Tagliente
 
-#include "entity.h"
-#include "type_id.h"
+#pragma once
 
 namespace ecs
 {
@@ -9,15 +8,15 @@ namespace ecs
 	{
 	public:
 
-		Engine()
-		{ }
+		Engine() = default;
 
-		void update(const float deltaTime)
-		{
-			// m_systemManager.update(deltaTime);
-		}
+		void update(const float deltaTime);
+
+		static Engine& instance();
 
 	private:
+
+		static Engine s_instance;
 
 	};
 }
