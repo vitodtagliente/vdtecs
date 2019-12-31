@@ -12,7 +12,10 @@ struct Position
 class PositionSystem : public System<PositionSystem, Position>
 {
 public:
-
+	virtual void update(const float delta_time) override
+	{
+		// TODO
+	}
 };
 
 int main()
@@ -33,6 +36,11 @@ int main()
 	{
 		cout << entity.id() << endl;
 	}
+
+	auto& manager = SystemManager::instance();
+	manager.add<PositionSystem>();
+
+	const auto& systems = SystemManager::instance().all();
 
 	return getchar();
 }

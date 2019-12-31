@@ -18,44 +18,28 @@ namespace ecs
 		using iterator = std::vector<ISystem*>::iterator;
 		using const_iterator = std::vector<ISystem*>::const_iterator;
 
-		// template <typename T, typename... P>
-		// ISystem* const add(P... args)
-		// {
-		// 	ISystem* const system = new T(std::forward<P>(args)...);
-		// 	system->init();
-		// 	m_systems.push_back(system);
-		// 	m_lookup.insert({ T::component_t::type_id(), system });
-		// 	return system;
-		// }
-
-		void push_back(ISystem* const system)
+		// register a system
+		template <typename T, typename TEnabled = std::enable_if<std::is_base_of<ISystem, T>::value>>
+		void add()
 		{
-			m_systems.push_back(system);
+			add(&T::instance());
 		}
 
-		template <typename T>
+		void add(ISystem* const system);
+
+		template <typename T, typename TEnabled = std::enable_if<std::is_base_of<ISystem, T>::value>>
 		T* const get() const
 		{
-			// if T is a component type, retrieve it by the lookup table
-			// if (std::is_base_of<Component<T>, T>::value)
-			// {
-			// 	const auto it = m_lookup.find(T:type_id());
-			// 	if (it != m_lookup.end())
-			// 	{
-			// 		return it->second;
-			// 	}
-			// }
-			// 
-			// for (ISystem* const system : m_systems)
-			// {
-			// 	T* const t_system = static_cast<T*>(system);
-			// 	if (t_system != nullptr)
-			// 		return t_system;
-			// }
+			for (ISystem* const system : m_systems)
+			{
+				T* const t_system = static_cast<T*>(system);
+				if (t_system != nullptr)
+					return t_system;
+			}
 			return nullptr;
 		}
 
-		template <typename T>
+		template <typename T, typename TEnabled = std::enable_if<std::is_base_of<ISystem, T>::value>>
 		void remove()
 		{
 			const auto it = std::find_if(
@@ -74,20 +58,14 @@ namespace ecs
 			}
 		}
 
-		const_iterator begin() const noexcept
-		{ 
-			return m_systems.begin(); 
-		}
+		// retrieve the systems vector
+		const std::vector<ISystem*>& all() const;
 
-		const_iterator end() const noexcept
-		{
-			return m_systems.end();
-		}
+		// iterators
+		const_iterator begin() const noexcept;
+		const_iterator end() const noexcept;
 
-		static SystemManager& instance()
-		{
-			return s_instance;
-		}
+		static SystemManager& instance();
 
 	private:
 
@@ -101,7 +79,4 @@ namespace ecs
 		// singleton
 		static SystemManager s_instance;
 	};
-
-	// instance initialization
-	SystemManager SystemManager::s_instance{};
 }

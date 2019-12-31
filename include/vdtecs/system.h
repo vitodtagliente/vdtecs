@@ -6,7 +6,6 @@
 #include <cstddef>
 #include <vector>
 #include "entity.h"
-#include "type_id.h"
 
 namespace ecs
 {
@@ -77,11 +76,7 @@ namespace ecs
 			static std::size_t s_type_id;
 		};
 
-		System()
-			: ISystem()
-		{
-
-		}
+		System() = default;
 
 		// type aliases
 		using data_t = C;
