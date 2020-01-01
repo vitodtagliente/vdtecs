@@ -7,6 +7,7 @@ namespace ecs
 
 	void SystemManager::add(ISystem* const system)
 	{
+		system->init();
 		m_systems.push_back(system);
 	}
 

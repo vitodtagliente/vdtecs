@@ -5,14 +5,15 @@ project(${ProjectId})
 
 include_directories(. ../../include)
 
-file(GLOB PROJECT_HEADERS *.h) 
-file(GLOB PROJECT_SOURCES *.cpp)
+file(GLOB PROJECT_HEADERS "*.h") 
+file(GLOB PROJECT_SOURCES "*.cpp")
 
 source_group("Headers" FILES ${PROJECT_HEADERS})
 source_group("Sources" FILES ${PROJECT_SOURCES})
 
 add_executable(
     ${PROJECT_NAME} 
+    ${PROJECT_HEADERS}
     ${PROJECT_SOURCES} 
 )
 

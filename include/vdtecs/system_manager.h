@@ -69,9 +69,7 @@ namespace ecs
 
 	private:
 
-		SystemManager()
-		{}
-
+		SystemManager() = default;
 		~SystemManager() = default;
 
 		// systems collection

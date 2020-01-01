@@ -1,6 +1,10 @@
 #include <iostream>
 #include <vdtecs/ecs.h>
 
+#include "stress.h"
+#include "time.h"
+#include "timer.h"
+
 using namespace std;
 using namespace ecs;
 
@@ -14,12 +18,17 @@ class PositionSystem : public System<PositionSystem, Position>
 public:
 	virtual void update(const float delta_time) override
 	{
-		// TODO
+		for (Component& component : components())
+		{
+			component.data().x += 1;
+		}
 	}
 };
 
 int main()
 {
+	Time time;
+
 	Engine engine;
 	engine.update(0.1f);
 
@@ -41,6 +50,14 @@ int main()
 	manager.add<PositionSystem>();
 
 	const auto& systems = SystemManager::instance().all();
+
+	// performance stress
+
+	constexpr int num_cycles = 10;
+	for (int i = 0; i < num_cycles; ++i)
+	{
+		time.tick();
+	}
 
 	return getchar();
 }
