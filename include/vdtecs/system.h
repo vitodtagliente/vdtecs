@@ -98,7 +98,10 @@ namespace ecs
 
 		}
 
-		virtual void uninit() override {}
+		virtual void uninit() override 
+		{
+			m_components.clear();
+		}
 
 		template <typename... P>
 		Component& addComponent(const Entity& entity, P... args)
