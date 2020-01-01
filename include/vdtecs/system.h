@@ -12,9 +12,14 @@ namespace ecs
 	class ISystem
 	{
 	public:
+		// system APIs
 		virtual void init() = 0;
 		virtual void update(const float delta_time) = 0;
 		virtual void uninit() = 0;
+
+		// entity APIs
+		virtual void removeEntity(const Entity::id_t entity_id) = 0;
+		virtual bool containsEntity(const Entity::id_t entity_id) = 0;
 	};
 
 	template <typename S, typename C>
@@ -101,6 +106,22 @@ namespace ecs
 		virtual void uninit() override 
 		{
 			m_components.clear();
+		}
+		
+		virtual void removeEntity(const Entity::id_t entity_id) override
+		{
+			for (auto it = m_components.begin(); it != m_components.end(); ++it)
+			{
+				if (it->entity_id() == entity_id)
+				{
+					m_components.erase(it);
+				}
+			}
+		}
+
+		virtual bool containsEntity(const Entity::id_t entity_id) override
+		{
+			return getComponent(entity_id) != nullptr;
 		}
 
 		template <typename... P>

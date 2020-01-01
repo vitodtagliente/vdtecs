@@ -1,4 +1,5 @@
 #include <vdtecs/entity.h>
+#include <vdtecs/system_manager.h>
 
 namespace ecs
 {
@@ -20,8 +21,11 @@ namespace ecs
 	{
 		if (is_valid())
 		{
-			// TODO
 			// remove from systems
+			for (ISystem* const system : SystemManager::instance())
+			{
+				system->removeEntity(m_id);
+			}
 			s_manager.remove(m_id);
 			m_id = Manager::INVALID_ID;
 		}
