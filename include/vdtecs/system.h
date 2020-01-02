@@ -76,6 +76,7 @@ namespace ecs
 
 		// type aliases
 		using Data = C;
+		using component_id_t = typename Component::id_t;
 
 		// returns the system instance
 		static S& instance() { return s_instance; }
@@ -119,8 +120,7 @@ namespace ecs
 		template <typename... P>
 		Component& addComponent(const Entity::id_t id, P... args)
 		{
-			// TODO: generate a new id
-			m_components.push_back(Component{ 0, id, C{std::forward<P>(args)...} });
+			m_components.push_back(Component{ ++m_id_counter, id, C{std::forward<P>(args)...} });
 			return m_components.front();
 		}
 
@@ -128,20 +128,17 @@ namespace ecs
 		inline std::vector<Component>& components() { return m_components; }
 		inline const std::vector<Component>& components() const { return m_components; }
 
-		Component* const getComponentById(const typename Component::id_t id) const
+		Component* const getComponentById(const component_id_t id)
 		{
-			const auto it = std::find_if(
-				m_components.begin(),
-				m_components.end()
-				[id](const Component& component)
-				{
-					return component.id() == id;
-				}
-			);
-			return *it;
+			for (Component& component : m_components)
+			{
+				if (component.id() == id)
+					return &component;
+			}
+			return nullptr;
 		}
 
-		Component* const getComponent(const Entity& entity) const { return getComponent(entity.id()); }
+		Component* const getComponent(const Entity& entity) { return getComponent(entity.id()); }
 
 		Component* const getComponent(const Entity::id_t id)
 		{
@@ -191,6 +188,8 @@ namespace ecs
 
 		// list of components
 		std::vector<Component> m_components;
+		// components id counter
+		component_id_t m_id_counter;
 		// system static instance
 		static S s_instance;
 		// system type id

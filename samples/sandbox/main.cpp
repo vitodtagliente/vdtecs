@@ -36,6 +36,8 @@ int main()
 	
 	const auto& c = a.getComponent<PositionSystem::Component>();
 	const auto& component = a.getComponents<PositionSystem::Component>();
+
+	const auto& f = PositionSystem::instance().getComponentById(2);
 	
 	for (auto entity : Entity::all())
 	{
