@@ -3,14 +3,6 @@
 
 namespace ecs
 {
-	// singleton instance 
-	Engine Engine::s_instance{};
-
-	Engine& Engine::instance()
-	{
-		return s_instance;
-	}
-
 	void Engine::update(const float delta_time)
 	{
 		// update all systems

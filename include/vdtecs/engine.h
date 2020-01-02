@@ -12,11 +12,5 @@ namespace ecs
 
 		void update(const float delta_time);
 
-		static Engine& instance();
-
-	private:
-
-		static Engine s_instance;
-
 	};
 }
