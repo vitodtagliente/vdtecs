@@ -72,7 +72,10 @@ namespace ecs
 			static std::size_t s_type_id;
 		};
 
-		System() = default;
+		System()
+			: m_components()
+			, m_id_counter()
+		{}
 
 		// type aliases
 		using Data = C;
