@@ -20,14 +20,14 @@ namespace ecs
 		public:
 
 			// type aliases
-			using data_t = C;
+			using Data = C;
 			using entity_id_t = Entity::id_t;
 			using id_t = std::uint32_t;
-			using system_t = S;
+			using System = S;
 
 			static constexpr id_t INVALID_ID = 0;
 
-			Component(const id_t id, const entity_id_t entity_id, const data_t& data)
+			Component(const id_t id, const entity_id_t entity_id, const Data& data)
 				: m_id(id)
 				, m_entity_id(entity_id)
 				, m_data(data)
@@ -42,8 +42,8 @@ namespace ecs
 			// returns the entity id
 			inline entity_id_t entity_id() const { return m_entity_id; }
 			// returns the component data
-			inline data_t& data() { return m_data; }
-			inline const data_t& data() const { return m_data; }
+			inline Data& data() { return m_data; }
+			inline const Data& data() const { return m_data; }
 			// returns the component type id
 			static std::size_t type_id() { return s_type_id; }
 
@@ -64,7 +64,7 @@ namespace ecs
 			// entity id
 			entity_id_t m_entity_id;
 			// component's data
-			data_t m_data;
+			Data m_data;
 			// component type id
 			static std::size_t s_type_id;
 		};

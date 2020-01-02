@@ -76,25 +76,25 @@ namespace ecs
 		template <typename T, typename... P>
 		inline T& addComponent(P... args)
 		{
-			return T::system_t::instance().addComponent(m_id, std::forward<P>(args)...);
+			return T::System::instance().addComponent(m_id, std::forward<P>(args)...);
 		}
 
 		template <typename T>
 		inline T* getComponent() const
 		{
-			return T::system_t::instance().getComponent(m_id);
+			return T::System::instance().getComponent(m_id);
 		}
 
 		template <typename T>
 		inline std::vector<T*> getComponents() const
 		{
-			return T::system_t::instance().getComponents(m_id);
+			return T::System::instance().getComponents(m_id);
 		}
 
 		template <typename T>
 		inline void removeComponent()
 		{
-			T::system_t::instance().removeComponent(m_id);
+			T::System::instance().removeComponent(m_id);
 		}
 
 		// facilities APIs
