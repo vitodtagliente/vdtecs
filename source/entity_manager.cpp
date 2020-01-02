@@ -62,6 +62,15 @@ namespace ecs
 		}
 	}
 
+	void Entity::Manager::flush()
+	{
+		for (auto it = m_pendingRemoveEntities.begin(); it != m_pendingRemoveEntities.end(); ++it)
+		{
+			m_unusedIds.push_back(it->id());
+			m_pendingRemoveEntities.erase(it);
+		}
+	}
+
 	void Entity::Manager::reset()
 	{
 		m_counter = INVALID_ID;

@@ -21,7 +21,7 @@ namespace ecs
 		
 		/// this Manager is responsible of ids assignments
 		/// moreover, it behaves as a central location in which all entities are stored
-		class Manager
+		class Manager final
 		{
 		public:
 
@@ -40,6 +40,8 @@ namespace ecs
 			// remove an entity
 			// (system components removement)
 			void remove(const id_t id);
+			// flush pending data
+			void flush();
 
 			// reset and clear all data
 			void reset();

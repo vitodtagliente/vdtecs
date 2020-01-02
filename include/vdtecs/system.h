@@ -6,22 +6,10 @@
 #include <cstddef>
 #include <vector>
 #include "entity.h"
+#include "isystem.h"
 
 namespace ecs
-{
-	class ISystem
-	{
-	public:
-		// system APIs
-		virtual void init() = 0;
-		virtual void update(const float delta_time) = 0;
-		virtual void uninit() = 0;
-
-		// entity APIs
-		virtual void removeEntity(const Entity::id_t entity_id) = 0;
-		virtual bool containsEntity(const Entity::id_t entity_id) = 0;
-	};
-
+{	
 	template <typename S, typename C>
 	class System : public ISystem
 	{

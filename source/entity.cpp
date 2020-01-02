@@ -1,5 +1,5 @@
 #include <vdtecs/entity.h>
-#include <vdtecs/system_manager.h>
+#include <vdtecs/system.h>
 
 namespace ecs
 {
@@ -22,7 +22,7 @@ namespace ecs
 		if (is_valid())
 		{
 			// remove from systems
-			for (ISystem* const system : SystemManager::instance())
+			for (ISystem* const system : ISystem::manager())
 			{
 				system->removeEntity(m_id);
 			}

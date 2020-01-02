@@ -42,10 +42,10 @@ int main()
 		cout << entity.id() << endl;
 	}
 
-	auto& manager = SystemManager::instance();
+	auto& manager = ISystem::manager();
 	manager.add<PositionSystem>();
 
-	const auto& systems = SystemManager::instance().all();
+	const auto& systems = manager.all();
 
 	return getchar();
 }
