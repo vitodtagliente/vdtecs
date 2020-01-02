@@ -20,7 +20,7 @@ namespace ecs
 	public:
 		
 		/// this Manager is responsible of ids assignments
-		/// moreover, it behaves as a central location in which all entities are stored
+		/// moreover, it behaves as a central location in which all entities are stored (cached)
 		class Manager final
 		{
 		public:
@@ -97,7 +97,7 @@ namespace ecs
 			T::System::instance().removeComponent(m_id);
 		}
 
-		// facilities APIs
+		/// facilities APIs
 		static Entity create();
 		static Entity find(const id_t id);
 		static std::vector<Entity> all();

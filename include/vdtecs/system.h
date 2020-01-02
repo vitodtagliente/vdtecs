@@ -77,7 +77,7 @@ namespace ecs
 		System() = default;
 
 		// type aliases
-		using data_t = C;
+		using Data = C;
 
 		// returns the system instance
 		static S& instance() { return s_instance; }
