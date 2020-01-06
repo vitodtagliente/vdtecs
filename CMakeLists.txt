@@ -4,7 +4,6 @@ project(vdtecs)
 enable_testing()
 
 set(CMAKE_CXX_STANDARD 17)
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib/)
 
 include_directories(include)
 
@@ -20,6 +19,3 @@ add_library(
     ${PROJECT_HEADERS}
     ${PROJECT_SOURCES} 
 )
-
-# Samples
-add_subdirectory(samples/sandbox)
