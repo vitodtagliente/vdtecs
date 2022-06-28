@@ -124,7 +124,7 @@ namespace ecs
 		Component& addComponent(const Entity::id_t id, P... args)
 		{
 			m_components.push_back(Component{ ++m_id_counter, id, C{std::forward<P>(args)...} });
-			return m_components.front();
+			return m_components.back();
 		}
 
 		// retrieve all components
