@@ -24,7 +24,7 @@ namespace ecs
 		}
 
 		m_entities.push_back(Entity{ assigned_id });
-		return m_entities.front();
+		return m_entities.back();
 	}
 
 	const std::vector<Entity>& Entity::Manager::all() const
