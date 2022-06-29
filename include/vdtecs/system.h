@@ -86,7 +86,7 @@ namespace ecs
 
 		virtual void init() override {}
 		
-		virtual void update(const float delta_time) override
+		virtual void update(const double delta_time) override
 		{
 
 		}

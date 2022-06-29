@@ -3,10 +3,13 @@
 
 #include <vdtecs/ecs.h>
 
-#include "time.h"
-
 using namespace std;
 using namespace ecs;
+
+struct GraphicsSystem
+{
+	virtual void render() = 0;
+};
 
 struct Position
 {
@@ -16,7 +19,7 @@ struct Position
 class PositionSystem : public System<PositionSystem, Position>
 {
 public:
-	virtual void update(const float delta_time) override
+	virtual void update(const double delta_time) override
 	{
 		for (Component& component : components())
 		{
@@ -30,10 +33,10 @@ struct Character
 	std::string name;
 };
 
-class CharacterSystem : public System<CharacterSystem, Character>
+class CharacterSystem : public System<CharacterSystem, Character>, public GraphicsSystem
 {
 public:
-	virtual void update(const float delta_time) override
+	virtual void update(const double delta_time) override
 	{
 		for (Component& component : components())
 		{
@@ -43,6 +46,14 @@ public:
 				auto position = entity.getComponent<PositionSystem::Component>();
 				position->data.x += 3;
 			}
+		}
+	}
+
+	virtual void render() override
+	{
+		for (Component& component : components())
+		{
+			cout << "Rendering entity " << component.entity_id() << endl;
 		}
 	}
 };
@@ -80,7 +91,7 @@ int main()
 	// simulate 60 frames
 	for (int i = 0; i < 60; ++i)
 	{
-		engine.update(1.f / 60);
+		engine.update(1.0 / 60);
 	}
 
 	// positions
@@ -89,6 +100,16 @@ int main()
 		auto position = entity.getComponent<PositionSystem::Component>();
 		cout << "Entity " << entity.id() << ", position = x: " << position->data.x << ", y: " << position->data.y << endl;
 	}
+
+	// simulate the rendering
+	static const auto& render = [](ISystem* const system) -> void
+	{
+		if (GraphicsSystem* const graphicsSystem = dynamic_cast<GraphicsSystem*>(system))
+		{
+			graphicsSystem->render();
+		}
+	};
+	engine.execute(render);
 
 	return getchar();
 }

@@ -1,9 +1,8 @@
 #include <vdtecs/engine.h>
-#include <vdtecs/isystem.h>
 
 namespace ecs
 {
-	void Engine::update(const float delta_time)
+	void Engine::update(const double delta_time)
 	{
 		// update all systems
 		for (ISystem* const system : ISystem::manager())
@@ -19,6 +18,14 @@ namespace ecs
 			{
 				system->removeEntities(deletedEntities);
 			}
+		}
+	}
+
+	void Engine::execute(const std::function<void(ISystem* const)>& handler)
+	{
+		for (ISystem* const system : ISystem::manager())
+		{
+			handler(system);
 		}
 	}
 }

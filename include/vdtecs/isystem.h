@@ -73,7 +73,7 @@ namespace ecs
 
 		// system APIs
 		virtual void init() = 0;
-		virtual void update(const float delta_time) = 0;
+		virtual void update(const double delta_time) = 0;
 		virtual void uninit() = 0;
 
 		// entity APIs

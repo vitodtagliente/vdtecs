@@ -1,6 +1,9 @@
 /// Copyright (c) Vito Domenico Tagliente
-
 #pragma once
+
+#include <functional>
+
+#include "isystem.h"
 
 namespace ecs
 {
@@ -10,7 +13,8 @@ namespace ecs
 
 		Engine() = default;
 
-		void update(const float delta_time);
+		void update(const double delta_time);
+		void execute(const std::function<void(ISystem* const)>& handler);
 
 	};
 }
