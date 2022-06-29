@@ -62,13 +62,25 @@ namespace ecs
 		}
 	}
 
-	void Entity::Manager::flush()
+	std::vector<Entity::Manager::id_t> Entity::Manager::flush()
 	{
+		std::vector< Entity::Manager::id_t> deletedEntities;
+
 		for (auto it = m_pendingRemoveEntities.begin(); it != m_pendingRemoveEntities.end(); ++it)
 		{
 			m_unusedIds.push_back(it->id());
-			m_pendingRemoveEntities.erase(it);
+			deletedEntities.push_back(it->id());
+
+			const auto enIt = std::find_if(
+				m_entities.begin(),
+				m_entities.end(),
+				[id = it->id()](const Entity& entity) { return entity.id() == id; }
+			);
+			m_entities.erase(enIt);
 		}
+		m_pendingRemoveEntities.clear();
+
+		return deletedEntities;
 	}
 
 	void Entity::Manager::reset()

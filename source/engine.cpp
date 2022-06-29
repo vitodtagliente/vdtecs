@@ -10,7 +10,15 @@ namespace ecs
 		{
 			system->update(delta_time);
 		}
+
 		// flush pending data
-		Entity::manager().flush();
+		const auto& deletedEntities = Entity::manager().flush();
+		if (!deletedEntities.empty())
+		{
+			for (ISystem* const system : ISystem::manager())
+			{
+				system->removeEntities(deletedEntities);
+			}
+		}
 	}
 }

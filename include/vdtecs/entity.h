@@ -41,7 +41,7 @@ namespace ecs
 			// (system components removement)
 			void remove(const id_t id);
 			// flush pending data
-			void flush();
+			std::vector<id_t> flush();
 
 			// reset and clear all data
 			void reset();

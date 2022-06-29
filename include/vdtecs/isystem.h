@@ -78,6 +78,7 @@ namespace ecs
 
 		// entity APIs
 		virtual void removeEntity(const Entity::id_t entity_id) = 0;
+		virtual void removeEntities(const std::vector<Entity::id_t>& entity_ids) = 0;
 		virtual bool containsEntity(const Entity::id_t entity_id) = 0;
 
 		// retrieve the manager instance 

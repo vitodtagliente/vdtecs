@@ -103,6 +103,18 @@ namespace ecs
 				if (it->entity_id() == entity_id)
 				{
 					m_components.erase(it);
+					break;
+				}
+			}
+		}
+
+		virtual void removeEntities(const std::vector<Entity::id_t>& entity_ids) override
+		{
+			for (auto it = m_components.begin(); it != m_components.end(); ++it)
+			{
+				if (std::find(entity_ids.begin(), entity_ids.end(), it->entity_id()) != entity_ids.end())
+				{
+					m_components.erase(it);
 				}
 			}
 		}
