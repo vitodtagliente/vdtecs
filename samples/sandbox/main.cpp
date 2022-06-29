@@ -20,7 +20,7 @@ public:
 	{
 		for (Component& component : components())
 		{
-			component.data().x += 1;
+			component.data.x += 1;
 		}
 	}
 };
@@ -41,7 +41,7 @@ public:
 			if (entity.is_valid())
 			{
 				auto position = entity.getComponent<PositionSystem::Component>();
-				position->data().x += 3;
+				position->data.x += 3;
 			}
 		}
 	}
@@ -87,7 +87,7 @@ int main()
 	for (auto entity : Entity::all())
 	{
 		auto position = entity.getComponent<PositionSystem::Component>();
-		cout << "Entity " << entity.id() << ", position = x: " << position->data().x << ", y: " << position->data().y << endl;
+		cout << "Entity " << entity.id() << ", position = x: " << position->data.x << ", y: " << position->data.y << endl;
 	}
 
 	return getchar();
