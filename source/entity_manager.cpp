@@ -13,10 +13,10 @@ namespace ecs
 	{
 		id_t assigned_id = INVALID_ID;
 
-		if (m_unusedIds.size() > 0)
+		if (!m_unusedIds.empty())
 		{
-			assigned_id = m_unusedIds.front();
-			m_unusedIds.pop_back();
+			assigned_id = m_unusedIds.top();
+			m_unusedIds.pop();
 		}
 		else
 		{
@@ -68,7 +68,7 @@ namespace ecs
 
 		for (auto it = m_pendingRemoveEntities.begin(); it != m_pendingRemoveEntities.end(); ++it)
 		{
-			m_unusedIds.push_back(it->id());
+			m_unusedIds.push(it->id());
 			deletedEntities.push_back(it->id());
 
 			const auto enIt = std::find_if(
@@ -87,7 +87,7 @@ namespace ecs
 	{
 		m_counter = INVALID_ID;
 		m_entities.clear();
-		m_unusedIds.clear();
+		m_unusedIds = std::stack<Entity::id_t>();
 		m_pendingRemoveEntities.clear();
 	}
 }

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <map>
+#include <stack>
 #include <vector>
 
 namespace ecs
@@ -55,7 +56,7 @@ namespace ecs
 			// list of ids pending to be removed
 			std::vector<Entity> m_pendingRemoveEntities;
 			// list of unused ids
-			std::vector<id_t> m_unusedIds;
+			std::stack<id_t> m_unusedIds;
 		};
 		
 		using id_t = Manager::id_t;
