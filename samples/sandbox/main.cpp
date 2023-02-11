@@ -25,7 +25,7 @@ struct Character
 class PositionSystem : public System<Transform>
 {
 protected:
-	virtual void process(std::vector<std::pair<id_t, Transform>>& data) override
+	virtual void process(std::vector<std::tuple<id_t, Transform>>& data) override
 	{
 		for (auto& [entity_id, transform] : data)
 		{
@@ -34,17 +34,20 @@ protected:
 	}
 };
 
-// class FooSystem : public System<Character, Transform>
-// {
-// protected:
-// 	virtual void process(std::vector<std::pair<id_t, Character, Transform>>& data) override
-// 	{
-// 		for (auto& [entity_id, character, transform] : data)
-// 		{
-// 			character.level++;
-// 		}
-// 	}
-// };
+class FooSystem : public System<Character, Transform>
+{
+protected:
+	virtual void process(
+		std::vector<std::tuple<id_t, Character>>& characters, 
+		std::vector<std::tuple<id_t, Transform>>& transforms
+	) override
+	{
+		for (auto& [entity_id, character] : characters)
+		{
+			character.level++;
+		}
+	}
+};
 
 int main()
 {
@@ -52,10 +55,6 @@ int main()
 
 	Entity a = Entity::create();
 	Entity b = Entity::create();
-
-	ComponentIterator<Transform, Character> it;
-	Transform& t = it.get<0, Transform>();
-	t.position.x = 9;
 
 	// positions
 	a.addComponent<Transform>();

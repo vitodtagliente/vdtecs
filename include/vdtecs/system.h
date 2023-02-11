@@ -4,6 +4,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <tuple>
 #include <vector>
 
 #include "id.h"
@@ -49,28 +50,18 @@ namespace ecs
 		virtual void run() final;
 
 	protected:
-		virtual void process(std::vector<std::pair<id_t, C...>>& components) = 0;
+		virtual void process(std::vector<std::tuple<id_t, C>>&...) = 0;
 
 	private:
-		template <typename T, typename ...A>
-		void _run();
-
 		static std::size_t s_id;
 	};
 
 	template <typename ...C>
 	std::size_t System<C...>::s_id = typeid(T).hash_code();
-	
+
 	template <typename ...C>
 	void System<C...>::run()
 	{
-		_run<C...>();
-	}
-	
-	template <typename ...C>
-	template <typename T, typename ...A>
-	void System<C...>::_run()
-	{
-		process(Component<T>::data());
+		process(Component<C>::data()...);
 	}
 }

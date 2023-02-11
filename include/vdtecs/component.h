@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <map>
-#include <tuple>
 #include <vector>
 
 #include "id.h"
@@ -16,7 +15,7 @@ namespace ecs
 	public:
 		Component() = delete;
 
-		typedef std::pair<id_t, T> data_t;
+		typedef std::tuple<id_t, T> data_t;
 
 		static std::vector<data_t>& data() { return s_data; }
 		static std::size_t id() { return s_id; }
@@ -35,7 +34,7 @@ namespace ecs
 	};
 
 	template <typename T>
-	std::vector<std::pair<id_t, T>> Component<T>::s_data;
+	std::vector<std::tuple<id_t, T>> Component<T>::s_data;
 	template <typename T>
 	std::size_t Component<T>::s_id = typeid(T).hash_code();
 	template <typename T>
@@ -68,7 +67,8 @@ namespace ecs
 		if (it != s_lookup.end())
 		{
 			const std::size_t index = it->second;
-			return &(s_data[index].second);
+			auto& [id, data] = s_data[index];
+			return &data;
 		}
 		return nullptr;
 	}
@@ -77,8 +77,8 @@ namespace ecs
 	T& Component<T>::push_back(const id_t entity_id, const T& data)
 	{
 		s_lookup.insert(std::make_pair(entity_id, s_data.size()));
-		s_data.push_back(std::make_pair(entity_id, data));
-		return s_data.back().second;
+		s_data.push_back(std::make_tuple(entity_id, data));
+		return std::get<1>(s_data.back());
 	}
 
 	template <typename T>
@@ -86,25 +86,7 @@ namespace ecs
 	T& Component<T>::push_back(const id_t entity_id, P... args)
 	{
 		s_lookup.insert(std::make_pair(entity_id, s_data.size()));
-		s_data.push_back(std::make_pair(entity_id, T{ std::forward<P>(args)... }));
-		return s_data.back().second;
-	}
-
-	template <typename ...T>
-	class ComponentIterator
-	{
-	public:
-		template <std::size_t index, typename C>
-		constexpr C& get();
-
-	private:
-		std::tuple<T...> m_data;
-	};
-
-	template <typename ...T>
-	template <std::size_t index, typename C>
-	constexpr C& ComponentIterator<T...>::get()
-	{
-		return std::get<index>(m_data);
+		s_data.push_back(std::make_tuple(entity_id, T{ std::forward<P>(args)... }));
+		return std::get<1>(s_data.back());
 	}
 }
