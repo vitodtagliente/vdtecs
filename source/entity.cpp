@@ -9,25 +9,20 @@ namespace ecs
 
 	bool Entity::is_valid() const
 	{
-		return m_id != Manager::INVALID_ID;
+		return m_id != INVALID_ID;
 	}
 
 	void Entity::invalidate()
 	{
-		m_id = Manager::INVALID_ID;
+		m_id = INVALID_ID;
 	}
 
 	void Entity::destroy()
 	{
 		if (is_valid())
 		{
-			// remove from systems
-			for (ISystem* const system : ISystem::manager())
-			{
-				system->removeEntity(m_id);
-			}
 			s_manager.remove(m_id);
-			m_id = Manager::INVALID_ID;
+			m_id = INVALID_ID;
 		}
 	}
 
@@ -51,19 +46,19 @@ namespace ecs
 		return s_manager.find(id);
 	}
 
-	std::vector<Entity> Entity::all()
+	const std::vector<Entity>& Entity::all()
 	{
 		return s_manager.all();
 	}
 
 	// get the Entity Manager
-	Entity::Manager Entity::manager()
+	Entity::Manager& Entity::manager()
 	{
 		return s_manager;
 	}
 
 	// Invalid Entity
-	Entity Entity::INVALID{ Manager::INVALID_ID };
+	Entity Entity::INVALID{ INVALID_ID };
 	// Entity Manager
 	Entity::Manager Entity::s_manager{};
 }

@@ -6,26 +6,14 @@
 using namespace std;
 using namespace ecs;
 
-struct GraphicsSystem
+struct vector3
 {
-	virtual void render() = 0;
+	float x = 0.f, y = 0.f, z = 0.f;
 };
 
-struct Position
+struct Transform
 {
-	int x, y;
-};
-
-class PositionSystem : public System<PositionSystem, Position>
-{
-public:
-	virtual void update(const double delta_time) override
-	{
-		for (Component& component : components())
-		{
-			component.data.x += 1;
-		}
-	}
+	vector3 position;
 };
 
 struct Character
@@ -33,83 +21,46 @@ struct Character
 	std::string name;
 };
 
-class CharacterSystem : public System<CharacterSystem, Character>, public GraphicsSystem
+class PositionSystem : public System<Transform>
 {
-public:
-	virtual void update(const double delta_time) override
+protected:
+	virtual void process(std::vector<Transform>& transforms) override
 	{
-		for (Component& component : components())
+		for (auto& transform : transforms)
 		{
-			auto entity = Entity::find(component.entity_id());
-			if (entity.is_valid())
-			{
-				auto position = entity.getComponent<PositionSystem::Component>();
-				position->data.x += 3;
-			}
-		}
-	}
-
-	virtual void render() override
-	{
-		for (Component& component : components())
-		{
-			cout << "Rendering entity " << component.entity_id() << endl;
+			transform.position.x += 1.0f;
 		}
 	}
 };
 
 int main()
 {
-	Engine engine;
+	SystemRegistry registry;
 
 	Entity a = Entity::create();
 	Entity b = Entity::create();
+
 	// positions
-	a.addComponent<PositionSystem::Component>(1, 3);
-	b.addComponent<PositionSystem::Component>(2, 5);
+	a.addComponent<Transform>();
+	b.addComponent<Transform>();
 	// characters
-	a.addComponent<CharacterSystem::Component>("A");
-	b.addComponent<CharacterSystem::Component>("B");
+	a.addComponent<Character>("Entity A");
+	b.addComponent<Character>("Entity B");
 
-	const auto& c = a.getComponent<PositionSystem::Component>();
-	const auto& component = a.getComponents<PositionSystem::Component>();
-
-	const auto& f = PositionSystem::instance().getComponentById(2);
-
-	cout << "Entities" << endl;
-	for (auto entity : Entity::all())
+	cout << Component<Transform>::id() << endl;
+	for (const auto& data : Component<Transform>::data())
 	{
-		cout << entity.id() << endl;
+		cout << data.position.x << " " << data.position.y << endl;
 	}
+	cout << (Component<Transform>::find(a) != nullptr) << endl;
+	Component<Transform>::erase(a);
+	cout << (Component<Transform>::find(a) != nullptr) << endl;
 
-	auto& manager = ISystem::manager();
-	manager.add<PositionSystem>();
-	manager.add<CharacterSystem>();
-
-	const auto& systems = manager.all();
-
-	// simulate 60 frames
-	for (int i = 0; i < 60; ++i)
+	registry.push_back<PositionSystem>();
+	for (int i = 0; i < 100; ++i)
 	{
-		engine.update(1.0 / 60);
+		registry.run();
 	}
-
-	// positions
-	for (auto entity : Entity::all())
-	{
-		auto position = entity.getComponent<PositionSystem::Component>();
-		cout << "Entity " << entity.id() << ", position = x: " << position->data.x << ", y: " << position->data.y << endl;
-	}
-
-	// simulate the rendering
-	static const auto& render = [](ISystem* const system) -> void
-	{
-		if (GraphicsSystem* const graphicsSystem = dynamic_cast<GraphicsSystem*>(system))
-		{
-			graphicsSystem->render();
-		}
-	};
-	engine.execute(render);
 
 	return getchar();
 }

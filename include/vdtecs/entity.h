@@ -1,5 +1,4 @@
 /// Copyright (c) Vito Domenico Tagliente
-
 #pragma once
 
 #include <algorithm>
@@ -7,6 +6,9 @@
 #include <map>
 #include <stack>
 #include <vector>
+
+#include "component.h"
+#include "id.h"
 
 namespace ecs
 {
@@ -25,11 +27,6 @@ namespace ecs
 		class Manager final
 		{
 		public:
-
-			using id_t = std::uint32_t;
-
-			static constexpr id_t INVALID_ID = 0;
-
 			Manager();
 
 			// create a new entity, id assignment logic
@@ -37,10 +34,10 @@ namespace ecs
 			// retrieve all the alive entities 
 			const std::vector<Entity>& all() const;
 			// find an entity
-			Entity find(const id_t id) const;
+			Entity find(id_t entity_id) const;
 			// remove an entity
 			// (system components removement)
-			void remove(const id_t id);
+			void remove(id_t entity_id);
 			// flush pending data
 			std::vector<id_t> flush();
 
@@ -59,14 +56,13 @@ namespace ecs
 			std::stack<id_t> m_unusedIds;
 		};
 		
-		using id_t = Manager::id_t;
-
 		Entity(const id_t id);
 
 		inline id_t id() const { return m_id; }		
 
 		bool is_valid() const;
 		operator bool() const { return is_valid(); }
+		operator id_t() const { return m_id; }
 		void invalidate();
 
 		void destroy();
@@ -77,34 +73,28 @@ namespace ecs
 		template <typename T, typename... P>
 		inline T& addComponent(P... args)
 		{
-			return T::System::instance().addComponent(m_id, std::forward<P>(args)...);
+			return Component<T>::push_back(m_id, std::forward<P>(args)...);
 		}
 
 		template <typename T>
-		inline T* getComponent() const
+		inline T* const getComponent() const
 		{
-			return T::System::instance().getComponent(m_id);
-		}
-
-		template <typename T>
-		inline std::vector<T*> getComponents() const
-		{
-			return T::System::instance().getComponents(m_id);
+			return Component<T>::find(m_id);
 		}
 
 		template <typename T>
 		inline void removeComponent()
 		{
-			T::System::instance().removeComponent(m_id);
+			Component<T>::erase(m_id);
 		}
 
 		/// facilities APIs
 		static Entity create();
-		static Entity find(const id_t id);
-		static std::vector<Entity> all();
+		static Entity find(id_t entity_id);
+		static const std::vector<Entity>& all();
 
 		// get the Entity Manager
-		static Manager manager();
+		static Manager& manager();
 
 		// invalid entity definition
 		static Entity INVALID;

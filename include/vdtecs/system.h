@@ -2,219 +2,64 @@
 
 #pragma once 
 
-#include <cassert>
 #include <cstddef>
+#include <memory>
 #include <vector>
-#include "entity.h"
-#include "isystem.h"
+
+#include "id.h"
 
 namespace ecs
-{	
-	template <typename S, typename C>
+{
+	struct ISystem
+	{
+		virtual ~ISystem() = default;
+		virtual void run() = 0;
+	};
+
+	class SystemRegistry final
+	{
+	public:
+		void push_back(std::unique_ptr<ISystem> system);
+		template <typename T, typename TEnabled = std::enable_if<std::is_base_of<ISystem, T>::value>>
+		void push_back()
+		{
+			m_systems.push_back(std::unique_ptr<ISystem>(new T()));
+		}
+		template <typename T, typename...A, typename TEnabled = std::enable_if<std::is_base_of<ISystem, T>::value>>
+		void push_back(A... args)
+		{
+			m_systems.push_back(std::unique_ptr<ISystem>(new T(...args)));
+		}
+
+		void run();
+
+		const std::vector<std::unique_ptr<ISystem>>& systems() const { return m_systems; }
+
+	private:
+		std::vector<std::unique_ptr<ISystem>> m_systems;
+	};
+
+	template <typename C>
 	class System : public ISystem
 	{
 	public:
+		System() = default;
+		virtual ~System() = default;
 
-		/// Component class definition
-		/// It is responsible of storing info about it's owner (entity)
-		/// and data
-		class Component
-		{
-		public:
+		virtual void run() final;
 
-			// type aliases
-			using Data = C;
-			using entity_id_t = Entity::id_t;
-			using id_t = std::uint32_t;
-			using System = S;
-
-			static constexpr id_t INVALID_ID = 0;
-
-			Component(const id_t id, const entity_id_t entity_id, const Data& data)
-				: data(data)
-				, m_id(id)
-				, m_entity_id(entity_id)
-			{}
-
-			inline bool is_valid() const { return m_id != INVALID_ID; }
-			inline operator bool() const { return is_valid(); }
-			inline void invalidate() { m_id = INVALID_ID; }
-
-			// returns the component id
-			inline id_t id() const { return m_id; }
-			// returns the entity id
-			inline entity_id_t entity_id() const { return m_entity_id; }
-			// returns the component type id
-			static std::size_t type_id() { return s_type_id; }
-
-			inline bool operator== (const Component& component) const
-			{
-				return m_id == component.m_id;
-			}
-
-			inline bool operator!= (const Component& component) const
-			{
-				return m_id != component.m_id;
-			}
-
-			// component's data
-			Data data;
-
-		private:
-
-			// component id
-			id_t m_id;
-			// entity id
-			entity_id_t m_entity_id;
-			// component type id
-			static std::size_t s_type_id;
-		};
-
-		System()
-			: m_components()
-			, m_id_counter()
-		{}
-
-		// type aliases
-		using Data = C;
-		using component_id_t = typename Component::id_t;
-
-		// returns the system instance
-		static S& instance() { return s_instance; }
-		// returns the system type id
-		static std::size_t type_id() { return s_type_id; }
-
-		virtual void init() override {}
-		
-		virtual void update(const double delta_time) override
-		{
-
-		}
-
-		virtual void uninit() override 
-		{
-			m_components.clear();
-		}
-		
-		virtual void removeEntity(const Entity::id_t entity_id) override
-		{
-			for (auto it = m_components.begin(); it != m_components.end(); ++it)
-			{
-				if (it->entity_id() == entity_id)
-				{
-					m_components.erase(it);
-					break;
-				}
-			}
-		}
-
-		virtual void removeEntities(const std::vector<Entity::id_t>& entity_ids) override
-		{
-			for (auto it = m_components.begin(); it != m_components.end(); ++it)
-			{
-				if (std::find(entity_ids.begin(), entity_ids.end(), it->entity_id()) != entity_ids.end())
-				{
-					m_components.erase(it);
-				}
-			}
-		}
-
-		virtual bool containsEntity(const Entity::id_t entity_id) override
-		{
-			return getComponent(entity_id) != nullptr;
-		}
-
-		template <typename... P>
-		Component& addComponent(const Entity& entity, P... args)
-		{
-			return addComponent(entity.id(), std::forward<P>(args)...);
-		}
-
-		template <typename... P>
-		Component& addComponent(const Entity::id_t id, P... args)
-		{
-			m_components.push_back(Component{ ++m_id_counter, id, C{std::forward<P>(args)...} });
-			return m_components.back();
-		}
-
-		// retrieve all components
-		inline std::vector<Component>& components() { return m_components; }
-		inline const std::vector<Component>& components() const { return m_components; }
-
-		Component* const getComponentById(const component_id_t id)
-		{
-			for (Component& component : m_components)
-			{
-				if (component.id() == id)
-					return &component;
-			}
-			return nullptr;
-		}
-
-		Component* const getComponent(const Entity& entity) { return getComponent(entity.id()); }
-
-		Component* const getComponent(const Entity::id_t id)
-		{
-			for (Component& component : m_components)
-			{
-				if (component.entity_id() == id)
-					return &component;
-			}
-			return nullptr;
-		}
-
-		std::vector<Component*> getComponents(const Entity& entity) 
-		{ 
-			return getComponents(entity.id()); 
-		}
-
-		std::vector<Component*> getComponents(const Entity::id_t id)
-		{
-			std::vector<Component*> components;
-			for (Component& component : m_components)
-			{
-				if (component.entity_id() == id)
-					components.push_back(&component);
-			}
-			return components;
-		}
-
-		void removeComponent(const Entity& entity)
-		{
-			removeComponent(entity.id());
-		}
-
-		void removeComponent(const Entity::id_t entity_id)
-		{
-			const auto it = std::find_if(
-				m_components.begin(),
-				m_components.end()
-				[id = entity_id](const Component& component)
-				{
-					return component.entity_id() == id;
-				}
-			);
-			m_components.erase(it);
-		}
+	protected:
+		virtual void process(std::vector<C>& components) = 0;
 
 	private:
-
-		// list of components
-		std::vector<Component> m_components;
-		// components id counter
-		component_id_t m_id_counter;
-		// system static instance
-		static S s_instance;
-		// system type id
-		static std::size_t s_type_id;
+		static std::size_t s_id;
 	};
 
-	template <typename S, typename C>
-	S System<S, C>::s_instance{};
-
-	template <typename S, typename C>
-	std::size_t System<S, C>::s_type_id = typeid(S).hash_code();
-
-	template <typename S, typename C>
-	std::size_t System<S, C>::Component::s_type_id = typeid(S).hash_code();
+	template <typename C>
+	std::size_t System<C>::s_id = typeid(T).hash_code();
+	template <typename C>
+	void System<C>::run()
+	{
+		process(Component<C>::data());
+	}
 }

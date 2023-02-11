@@ -32,12 +32,12 @@ namespace ecs
 		return m_entities;
 	}
 
-	Entity Entity::Manager::find(const id_t id) const
+	Entity Entity::Manager::find(const id_t entity_id) const
 	{
 		const auto it = std::find_if(
 			m_entities.begin(),
 			m_entities.end(),
-			[id](const Entity& entity) { return entity.id() == id; }
+			[entity_id](const Entity& entity) { return entity.id() == entity_id; }
 		);
 
 		if (it != m_entities.end())
@@ -47,12 +47,12 @@ namespace ecs
 		return Entity{ INVALID_ID };
 	}
 
-	void Entity::Manager::remove(const id_t id)
+	void Entity::Manager::remove(const id_t entity_id)
 	{
 		const auto it = std::find_if(
 			m_entities.begin(),
 			m_entities.end(),
-			[id](const Entity& entity) { return entity.id() == id; }
+			[entity_id](const Entity& entity) { return entity.id() == entity_id; }
 		);
 
 		if (it != m_entities.end())
@@ -62,9 +62,9 @@ namespace ecs
 		}
 	}
 
-	std::vector<Entity::Manager::id_t> Entity::Manager::flush()
+	std::vector<id_t> Entity::Manager::flush()
 	{
-		std::vector< Entity::Manager::id_t> deletedEntities;
+		std::vector<id_t> deletedEntities;
 
 		for (auto it = m_pendingRemoveEntities.begin(); it != m_pendingRemoveEntities.end(); ++it)
 		{
@@ -87,7 +87,7 @@ namespace ecs
 	{
 		m_counter = INVALID_ID;
 		m_entities.clear();
-		m_unusedIds = std::stack<Entity::id_t>();
+		m_unusedIds = std::stack<id_t>();
 		m_pendingRemoveEntities.clear();
 	}
 }
