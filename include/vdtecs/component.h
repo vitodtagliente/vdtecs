@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <map>
+#include <tuple>
 #include <vector>
 
 #include "id.h"
@@ -87,5 +88,23 @@ namespace ecs
 		s_lookup.insert(std::make_pair(entity_id, s_data.size()));
 		s_data.push_back(std::make_pair(entity_id, T{ std::forward<P>(args)... }));
 		return s_data.back().second;
+	}
+
+	template <typename ...T>
+	class ComponentIterator
+	{
+	public:
+		template <std::size_t index, typename C>
+		constexpr C& get();
+
+	private:
+		std::tuple<T...> m_data;
+	};
+
+	template <typename ...T>
+	template <std::size_t index, typename C>
+	constexpr C& ComponentIterator<T...>::get()
+	{
+		return std::get<index>(m_data);
 	}
 }

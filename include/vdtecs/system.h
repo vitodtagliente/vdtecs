@@ -39,7 +39,7 @@ namespace ecs
 		std::vector<std::unique_ptr<ISystem>> m_systems;
 	};
 
-	template <typename C>
+	template <typename ...C>
 	class System : public ISystem
 	{
 	public:
@@ -49,17 +49,28 @@ namespace ecs
 		virtual void run() final;
 
 	protected:
-		virtual void process(std::vector<std::pair<id_t, C>>& components) = 0;
+		virtual void process(std::vector<std::pair<id_t, C...>>& components) = 0;
 
 	private:
+		template <typename T, typename ...A>
+		void _run();
+
 		static std::size_t s_id;
 	};
 
-	template <typename C>
-	std::size_t System<C>::s_id = typeid(T).hash_code();
-	template <typename C>
-	void System<C>::run()
+	template <typename ...C>
+	std::size_t System<C...>::s_id = typeid(T).hash_code();
+	
+	template <typename ...C>
+	void System<C...>::run()
 	{
-		process(Component<C>::data());
+		_run<C...>();
+	}
+	
+	template <typename ...C>
+	template <typename T, typename ...A>
+	void System<C...>::_run()
+	{
+		process(Component<T>::data());
 	}
 }

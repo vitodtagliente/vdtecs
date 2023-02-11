@@ -19,19 +19,32 @@ struct Transform
 struct Character
 {
 	std::string name;
+	int level = 0;
 };
 
 class PositionSystem : public System<Transform>
 {
 protected:
-	virtual void process(std::vector<std::pair<id_t, Transform>>& transforms) override
+	virtual void process(std::vector<std::pair<id_t, Transform>>& data) override
 	{
-		for (auto& [entity_id, transform] : transforms)
+		for (auto& [entity_id, transform] : data)
 		{
 			transform.position.x += 1.0f;
 		}
 	}
 };
+
+// class FooSystem : public System<Character, Transform>
+// {
+// protected:
+// 	virtual void process(std::vector<std::pair<id_t, Character, Transform>>& data) override
+// 	{
+// 		for (auto& [entity_id, character, transform] : data)
+// 		{
+// 			character.level++;
+// 		}
+// 	}
+// };
 
 int main()
 {
@@ -39,6 +52,10 @@ int main()
 
 	Entity a = Entity::create();
 	Entity b = Entity::create();
+
+	ComponentIterator<Transform, Character> it;
+	Transform& t = it.get<0, Transform>();
+	t.position.x = 9;
 
 	// positions
 	a.addComponent<Transform>();
