@@ -49,7 +49,7 @@ namespace ecs
 		virtual void run() final;
 
 	protected:
-		virtual void process(std::vector<C>& components) = 0;
+		virtual void process(std::vector<std::pair<id_t, C>>& components) = 0;
 
 	private:
 		static std::size_t s_id;

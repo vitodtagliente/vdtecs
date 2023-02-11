@@ -15,7 +15,7 @@ namespace ecs
 	public:
 		Component() = delete;
 
-		typedef T data_t;
+		typedef std::pair<id_t, T> data_t;
 
 		static std::vector<data_t>& data() { return s_data; }
 		static std::size_t id() { return s_id; }
@@ -28,13 +28,13 @@ namespace ecs
 		static T& push_back(id_t entity_id, P... args);
 
 	private:
-		static std::vector<T> s_data;
+		static std::vector<data_t> s_data;
 		static std::size_t s_id;
 		static std::map<id_t, std::size_t> s_lookup;
 	};
 
 	template <typename T>
-	std::vector<T> Component<T>::s_data;
+	std::vector<std::pair<id_t, T>> Component<T>::s_data;
 	template <typename T>
 	std::size_t Component<T>::s_id = typeid(T).hash_code();
 	template <typename T>
@@ -44,6 +44,7 @@ namespace ecs
 	void Component<T>::clear()
 	{
 		s_data.clear();
+		s_entities.clear();
 		s_lookup.clear();
 	}
 
@@ -66,7 +67,7 @@ namespace ecs
 		if (it != s_lookup.end())
 		{
 			const std::size_t index = it->second;
-			return &s_data[0] + index;
+			return &(s_data[index].second);
 		}
 		return nullptr;
 	}
@@ -75,8 +76,8 @@ namespace ecs
 	T& Component<T>::push_back(const id_t entity_id, const T& data)
 	{
 		s_lookup.insert(std::make_pair(entity_id, s_data.size()));
-		s_data.push_back(data);
-		return s_data.back();
+		s_data.push_back(std::make_pair(entity_id, data));
+		return s_data.back().second;
 	}
 
 	template <typename T>
@@ -84,7 +85,7 @@ namespace ecs
 	T& Component<T>::push_back(const id_t entity_id, P... args)
 	{
 		s_lookup.insert(std::make_pair(entity_id, s_data.size()));
-		s_data.push_back(T{ std::forward<P>(args)... });
-		return s_data.back();
+		s_data.push_back(std::make_pair(entity_id, T{ std::forward<P>(args)... }));
+		return s_data.back().second;
 	}
 }

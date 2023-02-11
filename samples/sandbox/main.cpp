@@ -24,9 +24,9 @@ struct Character
 class PositionSystem : public System<Transform>
 {
 protected:
-	virtual void process(std::vector<Transform>& transforms) override
+	virtual void process(std::vector<std::pair<id_t, Transform>>& transforms) override
 	{
-		for (auto& transform : transforms)
+		for (auto& [entity_id, transform] : transforms)
 		{
 			transform.position.x += 1.0f;
 		}
@@ -48,9 +48,9 @@ int main()
 	b.addComponent<Character>("Entity B");
 
 	cout << Component<Transform>::id() << endl;
-	for (const auto& data : Component<Transform>::data())
+	for (const auto& [entity_id, transform] : Component<Transform>::data())
 	{
-		cout << data.position.x << " " << data.position.y << endl;
+		cout << "entity_id: " << entity_id << ", x: " << transform.position.x << ", y: " << transform.position.y << endl;
 	}
 	cout << (Component<Transform>::find(a) != nullptr) << endl;
 	Component<Transform>::erase(a);
@@ -60,6 +60,11 @@ int main()
 	for (int i = 0; i < 100; ++i)
 	{
 		registry.run();
+	}
+
+	for (const auto& [entity_id, transform] : Component<Transform>::data())
+	{
+		cout << "entity_id: " << entity_id << ", x: " << transform.position.x << ", y: " << transform.position.y << endl;
 	}
 
 	return getchar();
