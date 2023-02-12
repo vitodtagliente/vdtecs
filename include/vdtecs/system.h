@@ -47,6 +47,8 @@ namespace ecs
 		System() = default;
 		virtual ~System() = default;
 
+		static std::size_t id() { return s_id; }
+
 		virtual void run() final;
 
 	protected:
