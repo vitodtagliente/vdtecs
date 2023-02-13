@@ -31,7 +31,7 @@ namespace ecs
 		list.erase(comp_it);
 	}
 
-	void ComponentTable::push_back(const id_t entity_id, const id_t component_id, const std::size_t data_address)
+	void ComponentTable::push_back(const id_t entity_id, const id_t component_id, std::size_t data_address)
 	{
 		const auto& it = s_data.find(entity_id);
 		if (it == s_data.end())

@@ -25,27 +25,18 @@ struct Character
 class PositionSystem : public System<Transform>
 {
 protected:
-	virtual void process(std::vector<std::tuple<id_t, Transform>>& data) override
+	virtual void process(id_t, Transform& transform) override
 	{
-		for (auto& [entity_id, transform] : data)
-		{
-			transform.position.x += 1.0f;
-		}
+		transform.position.x += 1.0f;
 	}
 };
 
 class FooSystem : public System<Character, Transform>
 {
 protected:
-	virtual void process(
-		std::vector<std::tuple<id_t, Character>>& characters, 
-		std::vector<std::tuple<id_t, Transform>>& transforms
-	) override
+	virtual void process(id_t, Character& character, Transform&) override
 	{
-		for (auto& [entity_id, character] : characters)
-		{
-			character.level++;
-		}
+		character.level++;
 	}
 };
 
@@ -68,9 +59,9 @@ int main()
 	{
 		cout << "entity_id: " << entity_id << ", x: " << transform.position.x << ", y: " << transform.position.y << endl;
 	}
-	cout << (Component<Transform>::find(a) != nullptr ? "A found!" : "A not found") << endl;
-	Component<Transform>::erase(a);
-	cout << (Component<Transform>::find(a) != nullptr ? "A found!" : "A not found") << endl;
+	cout << (Component<Transform>::find(b) != nullptr ? "B found!" : "B not found") << endl;
+	Component<Transform>::erase(b);
+	cout << (Component<Transform>::find(b) != nullptr ? "B found!" : "B not found") << endl;
 
 	registry.push_back<PositionSystem>();
 	for (int i = 0; i < 100; ++i)

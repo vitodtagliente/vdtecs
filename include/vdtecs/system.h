@@ -7,6 +7,8 @@
 #include <tuple>
 #include <vector>
 
+#include "archetype.h"
+#include "component.h"
 #include "id.h"
 
 namespace ecs
@@ -52,7 +54,7 @@ namespace ecs
 		virtual void run() final;
 
 	protected:
-		virtual void process(std::vector<std::tuple<id_t, C>>&...) = 0;
+		virtual void process(id_t, C&...) = 0;
 
 	private:
 		static std::size_t s_id;
@@ -64,6 +66,16 @@ namespace ecs
 	template <typename ...C>
 	void System<C...>::run()
 	{
-		process(Component<C>::data()...);
+		if constexpr (sizeof...(C) == 1)
+		{
+			for (auto& data : Component<C...>::data())
+			{
+				process(std::get<0>(data), std::get<1>(data));
+			}
+		}
+		else
+		{
+
+		}
 	}
 }
