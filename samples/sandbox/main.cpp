@@ -74,5 +74,10 @@ int main()
 		cout << "entity_id: " << entity_id << ", x: " << transform.position.x << ", y: " << transform.position.y << endl;
 	}
 
+	for (const auto& [entity_id, character] : Component<Character>::data())
+	{
+		cout << "entity_id: " << entity_id << ", level: " << character.level << endl;
+	}
+
 	return getchar();
 }

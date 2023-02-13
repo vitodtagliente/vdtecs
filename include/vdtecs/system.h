@@ -75,9 +75,12 @@ namespace ecs
 		}
 		else
 		{
-			// find the entities by archetype
+			// TODO: find the entities by archetype
 			std::vector<id_t> entities;
-
+			for (const id_t entity : entities)
+			{
+				process(entity, *Component<C>::find(entity)...);
+			}
 		}
 	}
 }
