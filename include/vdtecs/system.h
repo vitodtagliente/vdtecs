@@ -75,6 +75,8 @@ namespace ecs
 		}
 		else
 		{
+			// find the entities by archetype
+			std::vector<id_t> entities;
 
 		}
 	}
