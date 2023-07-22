@@ -16,15 +16,18 @@ namespace ecs
 	{
 		id_t id;
 		std::unordered_set<id_t> components;
+		std::unordered_set<id_t> entities;
 	};
 
 	class ArchetypeTable
 	{
 	public:
+		template <typename ...C>
+		static Archetype& emplace(C...components);
 
 		template <typename ...C>
 		static Archetype* const find();
-
+		static Archetype* const find(const std::unordered_set<id_t>& components);
 
 	private:
 		static std::vector<Archetype> s_archetypes;
@@ -33,22 +36,17 @@ namespace ecs
 	};
 
 	template <typename ...C>
+	Archetype& ArchetypeTable::emplace(C...components)
+	{
+		Archetype type;
+		type.components = { Component<C>::id()... };
+		s_archetypes.push_back(type);
+		return s_archetypes.back();
+	}
+
+	template <typename ...C>
 	Archetype* const ArchetypeTable::find()
 	{
-		std::unordered_set<id_t> set{ Component<C>::id()... };
-		const auto& it = std::find_if(
-			s_archetypes.begin(),
-			s_archetypes.end(),
-			[&set](const Archetype& archetype) -> bool
-			{
-				return archetype.components = set;
-			}
-		);
-
-		if (it != s_archetypes.end())
-		{
-			return *it;
-		}
-		return nullptr;
+		return find({ Component<C>::id()... });
 	}
 }
